@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <meta name="sportId" content="<%=sportId%>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="./css/styles.css" rel="stylesheet">
+    <script>
+        var token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        var sportId = document.querySelector('meta[name="sportId"]').getAttribute("content")
+        function deleteSession(id) {
+            fetch(`/deleteSession/${id}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    _csrf: token
+                })
+            }).then((res) => {
+                if (res.ok) {
+                    window.location=document.referrer
+                }
+            }).catch((err) => console.error(err))
+        }
+        function joinSession(id) {
+            var token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+            fetch(`/joinSession/${id}`, {
+              method: "put",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                _csrf: token,
+              }),
+            })
+              .then((res) => {
+                if (res.ok) {
+                    window.location.reload();
+                }
+              })
+              .catch((err) => console.error(err));
+          }
+    </script>
+    <title><%=title %></title>
+</head>
+<body class="bg-green-100">
+    <div class="grid grid-cols-5">
+        <div class="col-start-2 col-span-3">
+            <div class="py-5">
+                <h1 class="text-2xl font-semibold text-gray-600"><%=sportName %> Session #<%=sessionId %></h1>
+            </div>
+            <div class="rounded w-fit px-2 py-1 flex gap-2 cursor-pointer hover:text-600">
+                <a onclick="deleteSession(<%= sessionId %>)" class="text-white bg-red-600 hover:bg-red-800 font-medium rounded px-3 py-1.5 justify-right">Delete Session</a>
+            </div>
+            <div class="py-3">
+                <h3>This session is scheduled for <%= sessionTime %>, to be played at "<%=sessionVenue%>" </h3>
+            </div>
+            <div class="py-3">
+                <h2>Players in session are:</h2>
+            </div>
+            <div class="flex">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
+                            <% for(var i=0;i<players.length;i++) {%>
+                                <div class="bg-green-100 text-grey-500 text-lg font-semibold text-center p-2 rounded-lg">
+                                      <label><%= players[i] %></label>
+                                </div>
+                            <%} %>
+                </div>
+            </div>
+            <div class="relative inline-block py-3 flex-auto justify-center space-x-1">
+                    <a href="#" onclick="joinSession(<%= sessionId %>)" class="text-white bg-green-600 hover:bg-green-700 font-medium rounded px-3 py-1.5 justify-right hover:underline hover:text-gray-600">Join</a>
+                    <a href="#" class="text-white bg-red-600 hover:bg-red-700 font-medium rounded px-3 py-1.5 justify-right hover:underline hover:text-gray-600">Leave</a>   
+            </div> 
+        </div>
+    </div>
+</body>
+</html>

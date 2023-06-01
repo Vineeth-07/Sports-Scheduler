@@ -1,0 +1,14 @@
+<div>
+    <h6 class="text-red-600">
+        <%= (session.length==0)?"No Sports sessions are created yet":"" %>
+    </h6>
+</div>
+<ul class="list-none">
+    <% for (let i=0; i<session.length; i++) {%>
+        <li>
+            <div class="text-gray-600">
+                <h3><a href="/session/<%=session[i].id %>" class="hover:underline"><%= i+1 %>. <%= session[i].venue %></a></h3>
+            </div>
+        </li>
+    <% } %>
+</ul>

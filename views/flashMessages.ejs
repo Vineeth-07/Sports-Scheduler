@@ -1,0 +1,9 @@
+<div class="py-2">
+    <% if(messages && messages.error && messages.error.length>0){ %>
+        <% for(var i=0; i<messages.error.length; i++) { %>
+            <li class=" py-2 px-2 border bg-red-200 rounded"> 
+                <%= messages.error[i] %>
+            </li>
+        <%} %>
+    <%}%>
+</div>
