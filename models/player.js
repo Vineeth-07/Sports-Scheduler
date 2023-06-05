@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       // define association here
     }
-    static getAdmin(role) {
+    static getUser(role) {
       return this.findAll({
         where: {
           role,

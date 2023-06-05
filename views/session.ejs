@@ -12,6 +12,23 @@
         <%= title %>    
     </title>
 </head>
+<script>
+    var checkboxes = document.querySelectorAll('input[type="checkbox"][name="options"]');
+    var selectedOptionsField = document.getElementById("selectedOptionsField");
+    
+    function updateSelectedOptions() {
+      var selectedOptions = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+    
+      selectedOptionsField.value = selectedOptions.join(", ");
+    }
+    
+    checkboxes.forEach(function(checkbox) {
+      checkbox.addEventListener("input", updateSelectedOptions);
+    });
+    
+</script>
 <body class="bg-green-100">
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
@@ -27,6 +44,12 @@
                 <div>
                     <label for="venue">Where will this session be played?</label>
                     <input type="text" name="venue" placeholder="Venue" class="border border-gray-300 text-gray-900 rounded p-2 w-full">
+                </div>
+                <div>
+                    <% for (let i=0; i<players.length; i++) { %>
+                        <label><input type="checkbox" name="options" value="players[i].name"> <%= players[i].name %></label>
+                    <% } %>
+                    <input type="text" id="selectedOptionsField">
                 </div>
                 <div>
                     <label for="playersJoining">Who are the players joining you in this session?</label>

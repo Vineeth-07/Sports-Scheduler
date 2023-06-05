@@ -146,7 +146,7 @@ app.post(
 );
 
 app.post("/players", async (request, response) => {
-  const admin = await Player.getAdmin(request.body.submit);
+  const admin = await Player.getUser(request.body.submit);
   console.log(admin.length);
   if (admin.length >= 1) {
     request.flash("error", "Admin account already created!");
@@ -339,13 +339,16 @@ app.get(
     try {
       const sport = await Sport.findByPk(request.params.id);
       const sportId = request.params.id;
-      console.log(sport);
-      console.log(sportId);
+      const role = "player";
+      const players = await Player.getUser(role);
+      console.log(request.user.role);
+      console.log(players);
       const sportName = sport.dataValues.name;
       response.render("session", {
         title: "Session",
         sportId,
         sportName,
+        players,
         csrfToken: request.csrfToken(),
       });
     } catch (error) {
@@ -389,11 +392,9 @@ app.get(
       const sessionId = request.params.id;
       const session = await Session.findByPk(sessionId);
       const sportId = session.sportId;
-      console.log(sportId);
       const sport = await Sport.getSport(sportId);
       const sportName = sport.name;
       const sessionTime = session.time;
-      console.log(sessionTime);
       const sessionVenue = session.venue;
       const players = session.participants;
       const allPlayers = players
@@ -466,6 +467,39 @@ app.put(
       return response.json(join);
     } catch (error) {
       console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+
+app.put(
+  "/removePlayer/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    try {
+      console.log(request.body.playerName);
+      const userName = request.body.playerName;
+      console.log(userName);
+      console.log(request.params.id);
+      const session = await Session.findByPk(request.params.id);
+      const participants = session.participants;
+      console.log(participants);
+      if (participants.length > 0) {
+        if (participants.includes(userName)) {
+          const index = session.participants.indexOf(userName);
+          session.participants.splice(index, 1);
+        } else {
+          console.log(session.participants);
+        }
+      }
+      // session.participants.pop(request.user.name)
+      console.log(session.participants);
+      const leave = await Session.removePlayer(
+        session.participants,
+        request.params.id
+      );
+      return response.json(leave);
+    } catch (error) {
       return response.status(422).json(error);
     }
   }
